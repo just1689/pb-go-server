@@ -1,4 +1,4 @@
-package model
+package db
 
 type WordFeature struct {
 	Wid           int32  `json:"wid"`
