@@ -12,8 +12,18 @@ func main() {
 
 	log.Println("Oh hai 🚀 Lets Go 🎠")
 
+	//Blocking call
+	startServer()
+
+}
+
+func startServer() {
+
 	r := mux.NewRouter()
-	r.HandleFunc("/api", api.HandleAPICall)
+	r.HandleFunc("/api/term-search", api.HandleTermSearch)
+	r.HandleFunc("/api/word-lookup", api.HandleWordLookup)
+	r.HandleFunc("/api/chapter-text", api.HandleChapterText)
+	r.HandleFunc("/api/node-text", api.HandleNodeText)
 	r.Handle("*", http.FileServer(http.Dir("./")))
 	http.Handle("/", r)
 
