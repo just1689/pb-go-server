@@ -3,7 +3,6 @@ package main
 import (
 	"github.com/gorilla/mux"
 	"github.com/just1689/pb-go-server/api"
-	"github.com/just1689/pb-go-server/util"
 	"log"
 	"net/http"
 	"time"
@@ -15,7 +14,7 @@ func main() {
 
 	r := mux.NewRouter()
 	r.HandleFunc("/api", api.HandleAPICall)
-	r.HandleFunc("*", util.HandleFileRequest)
+	r.Handle("*", http.FileServer(http.Dir("./")))
 	http.Handle("/", r)
 
 	srv := &http.Server{
