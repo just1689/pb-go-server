@@ -3,7 +3,7 @@ package main
 import (
 	"flag"
 	"github.com/just1689/pb-go-server/api"
-	"github.com/just1689/pb-go-server/io"
+	"github.com/just1689/pb-go-server/io/ws"
 	"log"
 )
 
@@ -14,6 +14,6 @@ func main() {
 	log.Println("Oh hai 🚀 Lets Go 🎠")
 
 	//Blocking call
-	io.StartServer(addr, api.HandleIncoming)
+	ws.StartServer(addr, api.HandleIncoming)
 
 }

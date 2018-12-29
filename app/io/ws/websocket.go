@@ -1,4 +1,4 @@
-package io
+package ws
 
 import (
 	"bytes"
