@@ -64,7 +64,7 @@ func HandleTermSearch(client *ws.Client, message incoming.Message) {
 		if err := rows.Scan(&termSearchResult.Wid, &termSearchResult.TreeNode, &termSearchResult.UpperRid, &termSearchResult.LowerRid); err != nil {
 			log.Fatal(err)
 		}
-		log.Println("Row read: %v, %v, %v, %v", termSearchResult.Wid, termSearchResult.TreeNode, termSearchResult.LowerRid, termSearchResult.UpperRid)
+		log.Println("Row read: %i, %i, %i, %i", termSearchResult.Wid, termSearchResult.TreeNode, termSearchResult.LowerRid, termSearchResult.UpperRid)
 	}
 
 	//???
