@@ -4,7 +4,7 @@ type TermSearch struct {
 	Query        []Query  `json:"query"`
 	SearchRange  string   `json:"search_range"`
 	SearchFilter []string `json:"search_filter"`
-	texts        []string `json:"texts"`
+	Texts        []string `json:"texts"`
 }
 
 type Query struct {
