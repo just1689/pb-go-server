@@ -4,14 +4,15 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
-	"github.com/just1689/pb-go-server/io"
-	"github.com/just1689/pb-go-server/model"
+	"github.com/just1689/pb-go-server/io/ws"
+	"github.com/just1689/pb-go-server/model/db/views"
+	"github.com/just1689/pb-go-server/model/incoming"
 	"log"
 )
 import _ "github.com/go-sql-driver/mysql"
 
-func HandleIncoming(client *io.Client, msg []byte) {
-	var message model.Message
+func HandleIncoming(client *ws.Client, msg []byte) {
+	var message incoming.Message
 	if err := json.Unmarshal(msg, &message); err != nil {
 		fmt.Println(fmt.Sprintf("Error unmarshaling, %s", err))
 	}
@@ -19,7 +20,7 @@ func HandleIncoming(client *io.Client, msg []byte) {
 
 }
 
-func HandleTermSearch(client *io.Client, message model.Message) {
+func HandleTermSearch(client *ws.Client, message incoming.Message) {
 
 	//Not actually doing the work
 
@@ -70,7 +71,8 @@ func HandleTermSearch(client *io.Client, message model.Message) {
 	defer rows.Close()
 
 	for rows.Next() {
-		var termSearchResult model.TermSearchResult
+
+		var termSearchResult views.TermSearchResult
 		if err := rows.Scan(&termSearchResult.Wid, &termSearchResult.TreeNode, &termSearchResult.UpperRid, &termSearchResult.LowerRid); err != nil {
 			log.Fatal(err)
 		}

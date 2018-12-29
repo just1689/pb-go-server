@@ -1,4 +1,4 @@
-package query
+package views
 
 type TermSearchResult struct {
 	Wid      int32
