@@ -1,5 +1,9 @@
 package incoming
 
+type MessageTermSearch struct {
+	Payload TermSearch `json:"payload"`
+}
+
 type TermSearch struct {
 	Query        []Query  `json:"query"`
 	SearchRange  string   `json:"search_range"`

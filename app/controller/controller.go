@@ -20,7 +20,7 @@ func HandleIncoming(client *ws.Client, msg []byte) {
 	}
 
 	if message.Message == RouteTermSearch {
-		HandleTermSearch(client, message)
+		HandleTermSearch(client, msg)
 	} else {
 		log.Println("Unknown route: ", message.Message)
 	}

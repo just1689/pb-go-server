@@ -2,32 +2,40 @@ package controller
 
 import (
 	"database/sql"
+	"encoding/json"
+	"fmt"
 	"github.com/just1689/pb-go-server/io/ws"
 	"github.com/just1689/pb-go-server/model/db/views"
 	"github.com/just1689/pb-go-server/model/incoming"
 	"log"
+	"strings"
 )
 
-func HandleTermSearch(client *ws.Client, message incoming.Message) {
+func HandleTermSearch(client *ws.Client, raw []byte) {
 
-	//Not actually doing the work
+	var messageTermSearch incoming.MessageTermSearch
+	if err := json.Unmarshal(raw, &messageTermSearch); err != nil {
+		log.Println(fmt.Sprintf("Error unmarshaling, %s", err))
+	}
 
+	clauses := queriesToClause(convertMapToQuery(messageTermSearch.Payload.Query[0].Data))
 	query := `
 		SELECT
-			${eachWid(queryCount)},
-			word0.${treeNode} AS tree_node,
+			w.wid,
+			w._verse_node AS tree_node,
 			rid_range_by_tree_node.lower_rid,
 			rid_range_by_tree_node.upper_rid
 		FROM
-			${oneTablePerWord(queryCount)},
+			word_features w,
 			rid_range_by_tree_node
 		WHERE
-			${whereClauseElements.join("\n\t\t\tAND\n\t\t\t")}
+			CLAUSES
 			AND
-			rid_range_by_tree_node.tree_node = word0.${treeNode}
+			rid_range_by_tree_node.tree_node = w._verse_node
 		ORDER BY
-			word0.${treeNode};
+			w._verse_node;
 	`
+	sqlQuery := strings.Replace(query, "CLAUSES", clauses, 1)
 
 	//Execute sql
 	db, err := sql.Open("mysql", "root:toor@tcp(127.0.0.1:3306)/parabible_test")
@@ -43,13 +51,13 @@ func HandleTermSearch(client *ws.Client, message incoming.Message) {
 	}
 
 	// Prepare statement for reading data
-	stmtOut, err := db.Prepare(query)
+	stmtOut, err := db.Prepare(sqlQuery)
 	if err != nil {
 		panic(err.Error()) // proper error handling instead of panic in your app
 	}
 	defer stmtOut.Close()
 
-	rows, err := stmtOut.Query("", "", "")
+	rows, err := stmtOut.Query()
 	if err != nil {
 		panic(err.Error()) // proper error handling instead of panic in your app
 	}
@@ -72,4 +80,24 @@ func HandleTermSearch(client *ws.Client, message incoming.Message) {
 		log.Fatal("expected more result sets", rows.Err())
 	}
 
+}
+
+func queriesToClause(queries []string) string {
+	s := len(queries)
+	if s == 0 {
+		return ""
+	}
+	return strings.Join(queries[:], " AND ")
+}
+
+func convertMapToQuery(m map[string]string) []string {
+	var results []string
+	for k, v := range m {
+		results = append(results, fieldValueToQuery(k, v))
+	}
+	return results
+}
+
+func fieldValueToQuery(key, value string) string {
+	return fmt.Sprintf("_%s='%s'", key, value)
 }
