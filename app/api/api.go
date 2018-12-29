@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/just1689/pb-go-server/io"
 	"github.com/just1689/pb-go-server/model"
+	"log"
 )
 import _ "github.com/go-sql-driver/mysql"
 
@@ -52,10 +53,6 @@ func HandleTermSearch(client *io.Client, message model.Message) {
 		panic(err.Error()) // proper error handling instead of panic in your app
 	}
 
-	if true {
-		return
-	}
-
 	// Prepare statement for reading data
 	stmtOut, err := db.Prepare(query)
 	if err != nil {
@@ -63,20 +60,26 @@ func HandleTermSearch(client *io.Client, message model.Message) {
 	}
 	defer stmtOut.Close()
 
-	var squareNum int // we "scan" the result in here
-
-	// Query the square-number of 13
-	err = stmtOut.QueryRow(13).Scan(&squareNum) // WHERE number = 13
+	rows, err := stmtOut.Query("", "", "")
 	if err != nil {
 		panic(err.Error()) // proper error handling instead of panic in your app
 	}
-	fmt.Printf("The square number of 13 is: %d", squareNum)
-
-	// Query another number.. 1 maybe?
-	err = stmtOut.QueryRow(1).Scan(&squareNum) // WHERE number = 1
 	if err != nil {
-		panic(err.Error()) // proper error handling instead of panic in your app
+		log.Fatal(err)
 	}
-	fmt.Printf("The square number of 1 is: %d", squareNum)
+	defer rows.Close()
+
+	for rows.Next() {
+		var termSearchResult model.TermSearchResult
+		if err := rows.Scan(&termSearchResult.Wid, &termSearchResult.TreeNode, &termSearchResult.UpperRid, &termSearchResult.LowerRid); err != nil {
+			log.Fatal(err)
+		}
+		fmt.Printf("Row read: %v, %v, %v, %v", termSearchResult.Wid, termSearchResult.TreeNode, termSearchResult.LowerRid, termSearchResult.UpperRid)
+	}
+
+	//???
+	if !rows.NextResultSet() {
+		log.Fatal("expected more result sets", rows.Err())
+	}
 
 }
