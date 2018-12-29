@@ -1,24 +1,13 @@
-package api
+package controller
 
 import (
 	"database/sql"
-	"encoding/json"
 	"fmt"
 	"github.com/just1689/pb-go-server/io/ws"
 	"github.com/just1689/pb-go-server/model/db/views"
 	"github.com/just1689/pb-go-server/model/incoming"
 	"log"
 )
-import _ "github.com/go-sql-driver/mysql"
-
-func HandleIncoming(client *ws.Client, msg []byte) {
-	var message incoming.Message
-	if err := json.Unmarshal(msg, &message); err != nil {
-		fmt.Println(fmt.Sprintf("Error unmarshaling, %s", err))
-	}
-	HandleTermSearch(client, message)
-
-}
 
 func HandleTermSearch(client *ws.Client, message incoming.Message) {
 
