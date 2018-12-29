@@ -2,7 +2,6 @@ package controller
 
 import (
 	"database/sql"
-	"fmt"
 	"github.com/just1689/pb-go-server/io/ws"
 	"github.com/just1689/pb-go-server/model/db/views"
 	"github.com/just1689/pb-go-server/model/incoming"
@@ -65,7 +64,7 @@ func HandleTermSearch(client *ws.Client, message incoming.Message) {
 		if err := rows.Scan(&termSearchResult.Wid, &termSearchResult.TreeNode, &termSearchResult.UpperRid, &termSearchResult.LowerRid); err != nil {
 			log.Fatal(err)
 		}
-		fmt.Printf("Row read: %v, %v, %v, %v", termSearchResult.Wid, termSearchResult.TreeNode, termSearchResult.LowerRid, termSearchResult.UpperRid)
+		log.Println("Row read: %v, %v, %v, %v", termSearchResult.Wid, termSearchResult.TreeNode, termSearchResult.LowerRid, termSearchResult.UpperRid)
 	}
 
 	//???

@@ -1,8 +1,8 @@
 package ws
 
 import (
-	"fmt"
 	"github.com/gorilla/websocket"
+	"log"
 	"net/http"
 	"time"
 )
@@ -57,12 +57,12 @@ func (h *Hub) run() {
 		select {
 		case client := <-h.register:
 			h.clients[client] = true
-			fmt.Println("New client registered")
+			log.Println("New client registered")
 		case client := <-h.unregister:
 			if _, ok := h.clients[client]; ok {
 				delete(h.clients, client)
 				close(client.send)
-				fmt.Println("Client unregistered")
+				log.Println("Client unregistered")
 			}
 		}
 	}
