@@ -1,13 +1,12 @@
 package api
 
 import (
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"github.com/just1689/pb-go-server/io"
 	"github.com/just1689/pb-go-server/model"
-	"net/http"
 )
-import "database/sql"
 import _ "github.com/go-sql-driver/mysql"
 
 func HandleIncoming(client *io.Client, msg []byte) {
@@ -15,10 +14,11 @@ func HandleIncoming(client *io.Client, msg []byte) {
 	if err := json.Unmarshal(msg, &message); err != nil {
 		fmt.Println(fmt.Sprintf("Error unmarshaling, %s", err))
 	}
-	fmt.Println(message.Message)
+	HandleTermSearch(client, message)
+
 }
 
-func HandleTermSearch(w http.ResponseWriter, r *http.Request) {
+func HandleTermSearch(client *io.Client, message model.Message) {
 
 	//Not actually doing the work
 
@@ -36,10 +36,11 @@ func HandleTermSearch(w http.ResponseWriter, r *http.Request) {
 			AND
 			rid_range_by_tree_node.tree_node = word0.${treeNode}
 		ORDER BY
-			word0.${treeNode};`
+			word0.${treeNode};
+	`
 
 	//Execute sql
-	db, err := sql.Open("mysql", "user:password@/dbname")
+	db, err := sql.Open("mysql", "root:toor@tcp(127.0.0.1:3306)/parabible_test")
 	if err != nil {
 		panic(err.Error()) // Just for example purpose. You should use proper error handling instead of panic
 	}
@@ -49,6 +50,10 @@ func HandleTermSearch(w http.ResponseWriter, r *http.Request) {
 	err = db.Ping()
 	if err != nil {
 		panic(err.Error()) // proper error handling instead of panic in your app
+	}
+
+	if true {
+		return
 	}
 
 	// Prepare statement for reading data
