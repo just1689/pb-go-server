@@ -8,11 +8,20 @@ import (
 )
 import _ "github.com/go-sql-driver/mysql"
 
+const (
+	RouteTermSearch = "term-search"
+)
+
 func HandleIncoming(client *ws.Client, msg []byte) {
 	var message incoming.Message
 	if err := json.Unmarshal(msg, &message); err != nil {
 		fmt.Println(fmt.Sprintf("Error unmarshaling, %s", err))
 	}
-	HandleTermSearch(client, message)
+
+	if message.Message == RouteTermSearch {
+		HandleTermSearch(client, message)
+	} else {
+		fmt.Println("Unknown route: ", message.Message)
+	}
 
 }
