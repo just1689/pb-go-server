@@ -1,8 +1,8 @@
-package main
+package app
 
 import (
 	"flag"
-	"github.com/just1689/pb-go-server/io"
+	"github.com/just1689/pb-go-server/app/io"
 	"log"
 )
 
