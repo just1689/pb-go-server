@@ -2,10 +2,15 @@ package api
 
 import (
 	"fmt"
+	"github.com/just1689/pb-go-server/io"
 	"net/http"
 )
 import "database/sql"
 import _ "github.com/go-sql-driver/mysql"
+
+func HandleIncoming(client *io.Client, msg []byte) {
+
+}
 
 func HandleTermSearch(w http.ResponseWriter, r *http.Request) {
 

@@ -9,13 +9,13 @@ import (
 	"time"
 )
 
-func StartServer(addr *string) {
+func StartServer(addr *string, handler func(*Client, []byte)) {
 
 	flag.Parse()
 	hub := newHub()
 	go hub.run()
 	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
-		serveWs(hub, w, r)
+		serveWs(hub, handler, w, r)
 	})
 	err := http.ListenAndServe(*addr, nil)
 	if err != nil {
@@ -23,13 +23,13 @@ func StartServer(addr *string) {
 	}
 }
 
-func serveWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
+func serveWs(hub *Hub, handler func(*Client, []byte), w http.ResponseWriter, r *http.Request) {
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Println(err)
 		return
 	}
-	client := &Client{hub: hub, conn: conn, send: make(chan []byte, 256)}
+	client := &Client{hub: hub, conn: conn, send: make(chan []byte, 256), handler: handler}
 	client.hub.register <- client
 
 	go client.writePump()
