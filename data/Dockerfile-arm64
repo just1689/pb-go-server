@@ -1,0 +1,6 @@
+FROM arm64v8/mariadb:10.4.1
+
+ENV MYSQL_DATABASE parabible_test
+ADD ["sql/parabible_data.sql", "/docker-entrypoint-initdb.d/parabible_data.sql"]
+
+
